@@ -1,0 +1,1 @@
+{"manifest_version":3,"name":"PromptVault","version":"0.1.0","description":"Retrouvez et copiez vos prompts synchronisés.","permissions":["storage","identity","contextMenus"],"host_permissions":["https://*.supabase.co/*"],"action":{"default_popup":"popup.html"},"background":{"service_worker":"background.js"}}
