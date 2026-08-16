@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "../lib/supabase";
 
 type Prompt={id:string;title:string;content:string;category:string;tags:string[];favorite:boolean;archived:boolean;updatedAt:string;usageCount:number};
 const seed:Prompt[]=[
@@ -25,7 +25,7 @@ export default function PromptVaultApp(){
  const add=()=>{const p={...seed[0],id:crypto.randomUUID(),title:"Nouveau prompt",content:"Écrivez votre prompt ici…",tags:[],favorite:false,usageCount:0,updatedAt:new Date().toISOString()};setItems(x=>[p,...x]);setSelected(p.id);setEditing(true)};
  const copy=async()=>{await navigator.clipboard.writeText(current.content);update({usageCount:current.usageCount+1});notify("Prompt copié")};
  const save=async()=>{localStorage.setItem(KEY,JSON.stringify(items));if(userId){setSyncState("Synchronisation…");const rows=items.filter(p=>/^[0-9a-f-]{36}$/i.test(p.id)).map(p=>({id:p.id,user_id:userId,title:p.title,content:p.content,category_name:p.category,tags:p.tags,is_favorite:p.favorite,is_archived:p.archived,usage_count:p.usageCount,updated_at:p.updatedAt,client_updated_at:p.updatedAt}));const{error}=await supabase.from("prompts").upsert(rows);setSyncState(error?"Erreur de synchronisation":"Synchronisé")}setView("all");setQuery("");setEditing(false);notify(userId?"Prompt enregistré et synchronisé":"Prompt enregistré sur cet appareil")};
- const signIn=()=>supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin}});
+ const signIn=()=>supabase.auth.signInWithOAuth({provider:"google",options:{redirectTo:`${location.origin}${location.pathname}`}});
  const signOut=()=>supabase.auth.signOut();
  const openPrompt=(id:string)=>{setSelected(id);setEditing(true)};
  const exportData=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify(items,null,2)],{type:"application/json"}));a.download="promptvault-export.json";a.click();URL.revokeObjectURL(a.href)};
