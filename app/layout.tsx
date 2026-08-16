@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PromptVault — Votre bibliothèque de prompts",
-  description: "Enregistrez, organisez et synchronisez vos meilleurs prompts.",
+  title: "PromptNest — Your best prompts, always within reach",
+  description: "Save, organize and sync your best AI prompts.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
