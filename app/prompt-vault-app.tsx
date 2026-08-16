@@ -128,6 +128,53 @@ export default function PromptVaultApp() {
   const [syncState, setSyncState] = useState("Mode local");
   const searchRef = useRef<HTMLInputElement>(null);
 
+  const [fabPos, setFabPos] = useState<{ left: number; top: number } | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      const saved = localStorage.getItem("promptvault.fab_pos");
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const handleFabMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const initLeft = rect.left;
+    const initTop = rect.top;
+    let hasMoved = false;
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        hasMoved = true;
+      }
+      const newLeft = Math.max(10, Math.min(window.innerWidth - 180, initLeft + dx));
+      const newTop = Math.max(10, Math.min(window.innerHeight - 60, initTop + dy));
+      setFabPos({ left: newLeft, top: newTop });
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (hasMoved) {
+        setFabPos((pos) => {
+          if (pos) localStorage.setItem("promptvault.fab_pos", JSON.stringify(pos));
+          return pos;
+        });
+      } else {
+        handleCopyRequest();
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
+
+
   useEffect(() => localStorage.setItem(KEY, JSON.stringify(items)), [items]);
   useEffect(() => localStorage.setItem(KEY_COLLECTIONS, JSON.stringify(collections)), [collections]);
 
@@ -686,13 +733,15 @@ export default function PromptVaultApp() {
           </div>
         </div>
       )}
-      {/* Floating Action Button pour tester/remplir les variables rapidement */}
+      {/* Floating Action Button Déplaçable à la souris */}
       <button
         className="fab-webapp"
         style={{
           position: "fixed",
-          bottom: "24px",
-          right: "24px",
+          left: fabPos ? `${fabPos.left}px` : "auto",
+          top: fabPos ? `${fabPos.top}px` : "auto",
+          bottom: fabPos ? "auto" : "24px",
+          right: fabPos ? "auto" : "24px",
           zIndex: 40,
           background: "#183b2b",
           color: "#fff",
@@ -702,18 +751,20 @@ export default function PromptVaultApp() {
           fontSize: "13px",
           fontWeight: 700,
           boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
-          cursor: "pointer",
+          cursor: "grab",
           display: "flex",
           alignItems: "center",
           gap: "8px",
+          userSelect: "none",
+          touchAction: "none"
         }}
-
-        onClick={() => handleCopyRequest()}
-        title="Remplir les variables du prompt sélectionné"
+        onMouseDown={handleFabMouseDown}
+        title="Glisser-déposer pour déplacer le bouton, ou cliquer pour remplir les variables"
       >
-        ⚡ Remplir & Copier ({currentVars.length})
+        <span>🖐️</span> ⚡ Remplir & Copier ({currentVars.length})
       </button>
     </main>
   );
 }
+
 

@@ -190,8 +190,62 @@
     }
   }
 
-  fab.addEventListener("click", () => togglePalette());
+  // Load saved position
+  try {
+    chrome.storage.local.get("promptnest.fab_pos", (res) => {
+      if (res && res["promptnest.fab_pos"]) {
+        const pos = res["promptnest.fab_pos"];
+        fab.style.left = `${pos.left}px`;
+        fab.style.top = `${pos.top}px`;
+        fab.style.bottom = "auto";
+        fab.style.right = "auto";
+      }
+    });
+  } catch (e) {}
+
+  // Drag & drop logic
+  fab.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return;
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const rect = fab.getBoundingClientRect();
+    const initLeft = rect.left;
+    const initTop = rect.top;
+    let hasMoved = false;
+
+    const onMouseMove = (moveEvt) => {
+      const dx = moveEvt.clientX - startX;
+      const dy = moveEvt.clientY - startY;
+      if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+        hasMoved = true;
+      }
+      const newLeft = Math.max(10, Math.min(window.innerWidth - 160, initLeft + dx));
+      const newTop = Math.max(10, Math.min(window.innerHeight - 50, initTop + dy));
+      fab.style.left = `${newLeft}px`;
+      fab.style.top = `${newTop}px`;
+      fab.style.bottom = "auto";
+      fab.style.right = "auto";
+    };
+
+    const onMouseUp = () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (hasMoved) {
+        const rectAfter = fab.getBoundingClientRect();
+        try {
+          chrome.storage.local.set({ "promptnest.fab_pos": { left: rectAfter.left, top: rectAfter.top } });
+        } catch (e) {}
+      } else {
+        togglePalette();
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  });
+
   palette.querySelector("#pn-close").addEventListener("click", () => togglePalette(false));
+
 
   palette.querySelector("#pn-input").addEventListener("input", (e) => {
     const q = e.target.value.toLowerCase();
