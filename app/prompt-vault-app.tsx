@@ -122,8 +122,10 @@ export default function PromptVaultApp() {
   const [activeTab, setActiveTab] = useState<"edit" | "history">("edit");
   const [newColName, setNewColName] = useState("");
   const [showAddCol, setShowAddCol] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const [userId, setUserId] = useState<string | null>(null);
+
   const [userEmail, setUserEmail] = useState("");
   const [syncState, setSyncState] = useState("Mode local");
   const searchRef = useRef<HTMLInputElement>(null);
@@ -415,26 +417,36 @@ export default function PromptVaultApp() {
     <main className="app-shell">
       {toast && <div className="toast">✓ {toast}</div>}
 
+      {/* Backdrop mobile pour le tiroir de navigation */}
+      {mobileDrawerOpen && <div className="sidebar-backdrop" onClick={() => setMobileDrawerOpen(false)} />}
+
       {/* Sidebar Navigation */}
-      <aside className="sidebar">
-        <div className="brand">
-          <span className="brand-mark">P</span>
-          <span>PromptNest</span>
+      <aside className={`sidebar ${mobileDrawerOpen ? "mobile-drawer-open" : ""}`}>
+        <div className="brand" style={{ justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span className="brand-mark">P</span>
+            <span>PromptNest</span>
+          </div>
+          {mobileDrawerOpen && (
+            <button style={{ color: "#fff", fontSize: "20px" }} onClick={() => setMobileDrawerOpen(false)}>
+              ×
+            </button>
+          )}
         </div>
-        <button className="new-button" onClick={add}>
+        <button className="new-button" onClick={() => { add(); setMobileDrawerOpen(false); }}>
           ＋ Nouveau prompt
         </button>
 
         <nav>
-          <button className={view === "all" ? "active" : ""} onClick={() => setView("all")}>
+          <button className={view === "all" ? "active" : ""} onClick={() => { setView("all"); setMobileDrawerOpen(false); }}>
             ▦ <span>Tous les prompts</span>
             <b>{items.filter((x) => !x.archived).length}</b>
           </button>
-          <button className={view === "favorites" ? "active" : ""} onClick={() => setView("favorites")}>
+          <button className={view === "favorites" ? "active" : ""} onClick={() => { setView("favorites"); setMobileDrawerOpen(false); }}>
             ☆ <span>Favoris</span>
             <b>{items.filter((x) => x.favorite).length}</b>
           </button>
-          <button className={view === "archive" ? "active" : ""} onClick={() => setView("archive")}>
+          <button className={view === "archive" ? "active" : ""} onClick={() => { setView("archive"); setMobileDrawerOpen(false); }}>
             ♢ <span>Archives</span>
           </button>
 
@@ -461,7 +473,7 @@ export default function PromptVaultApp() {
           )}
 
           {collections.map((col) => (
-            <button key={col.id} className={view === col.id ? "active" : ""} onClick={() => setView(col.id)}>
+            <button key={col.id} className={view === col.id ? "active" : ""} onClick={() => { setView(col.id); setMobileDrawerOpen(false); }}>
               <span>{col.icon}</span>
               <span>{col.name}</span>
               <b>{items.filter((x) => !x.archived && x.collectionId === col.id).length}</b>
@@ -470,7 +482,7 @@ export default function PromptVaultApp() {
         </nav>
 
         <div className="sidebar-tools" style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-          <button style={{ background: "#254a37", borderRadius: "8px", color: "#fff", cursor: "pointer" }} onClick={() => setShowGallery(true)}>
+          <button style={{ background: "#254a37", borderRadius: "8px", color: "#fff", cursor: "pointer" }} onClick={() => { setShowGallery(true); setMobileDrawerOpen(false); }}>
             ⚡ Galerie de Modèles (15+)
           </button>
           <button onClick={exportData}>⇩ Exporter JSON</button>
@@ -488,18 +500,23 @@ export default function PromptVaultApp() {
       {/* Main Workspace */}
       <section className="workspace">
         <header>
-          <div>
-            <p className="eyebrow">PROMPTNEST</p>
-            <h1>
-              {view === "favorites"
-                ? "Favoris"
-                : view === "archive"
-                ? "Archives"
-                : view.startsWith("col-")
-                ? collections.find((c) => c.id === view)?.name || "Collection"
-                : "Tous les prompts"}
-            </h1>
-            <p>Your best prompts, always within reach.</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <button className="mobile-menu-btn" onClick={() => setMobileDrawerOpen(true)}>
+              ☰ <span>Dossiers</span>
+            </button>
+            <div>
+              <p className="eyebrow">PROMPTNEST</p>
+              <h1>
+                {view === "favorites"
+                  ? "Favoris"
+                  : view === "archive"
+                  ? "Archives"
+                  : view.startsWith("col-")
+                  ? collections.find((c) => c.id === view)?.name || "Collection"
+                  : "Tous les prompts"}
+              </h1>
+              <p>Your best prompts, always within reach.</p>
+            </div>
           </div>
           <div className="header-actions">
             <button className="mobile-new" onClick={add}>
@@ -517,6 +534,7 @@ export default function PromptVaultApp() {
             <span className="extension">Extension Chrome ↗</span>
           </div>
         </header>
+
 
         <div className="toolbar">
           <label className="search">
@@ -582,6 +600,35 @@ export default function PromptVaultApp() {
                   </button>
                 </div>
                 <textarea className="prompt-editor" value={current.content} onChange={(e) => update({ content: e.target.value })} />
+
+                {currentVars.length > 0 && (
+                  <div className="var-chips-row">
+                    <span style={{ fontSize: "10px", color: "#666", alignSelf: "center", fontWeight: "bold" }}>VARIABLES :</span>
+                    {currentVars.map((v) => (
+                      <span
+                        key={v}
+                        className="var-chip"
+                        onClick={() => {
+                          setVarValues({ ...varValues, [v]: "" });
+                          setShowVarRunner(true);
+                        }}
+                      >
+                        {"{{"} {v} {"}}"}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="editor-status-bar">
+                  <span>{current.content.length} caractères • {current.content.trim().split(/\s+/).filter(Boolean).length} mots</span>
+                  <button
+                    style={{ border: 0, background: "transparent", fontSize: "10px", color: "#315b43", cursor: "pointer", fontWeight: "bold" }}
+                    onClick={() => update({ content: current.content + " {{nouvelle_variable}}" })}
+                  >
+                    ＋ Insérer variable
+                  </button>
+                </div>
+
 
                 <div className="editor-fields">
                   <label>
@@ -733,6 +780,22 @@ export default function PromptVaultApp() {
           </div>
         </div>
       )}
+      {/* Barre de navigation basse pour écran mobile */}
+      <div className="bottom-nav">
+        <button className={view === "all" ? "active" : ""} onClick={() => { setView("all"); setMobileDrawerOpen(false); }}>
+          <span>▦</span> Prompts
+        </button>
+        <button onClick={() => setMobileDrawerOpen(true)}>
+          <span>📁</span> Dossiers
+        </button>
+        <button onClick={() => setShowGallery(true)}>
+          <span>⚡</span> Modèles
+        </button>
+        <button onClick={add}>
+          <span>＋</span> Nouveau
+        </button>
+      </div>
+
       {/* Floating Action Button Déplaçable à la souris */}
       <button
         className="fab-webapp"
@@ -766,5 +829,6 @@ export default function PromptVaultApp() {
     </main>
   );
 }
+
 
 
