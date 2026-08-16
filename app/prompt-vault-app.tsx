@@ -499,10 +499,11 @@ export default function PromptVaultApp() {
 
       {/* Main Workspace */}
       <section className="workspace">
-        <header>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <button className="mobile-menu-btn" onClick={() => setMobileDrawerOpen(true)}>
-              ☰ <span>Dossiers</span>
+        <header className="app-header">
+
+          <div className="header-left">
+            <button className="mobile-menu-btn" onClick={() => setMobileDrawerOpen(true)} title="Ouvrir les dossiers">
+              ☰
             </button>
             <div>
               <p className="eyebrow">PROMPTNEST</p>
@@ -515,25 +516,27 @@ export default function PromptVaultApp() {
                   ? collections.find((c) => c.id === view)?.name || "Collection"
                   : "Tous les prompts"}
               </h1>
-              <p>Your best prompts, always within reach.</p>
+              <p className="header-subtitle">Your best prompts, always within reach.</p>
             </div>
           </div>
+
           <div className="header-actions">
-            <button className="mobile-new" onClick={add}>
-              ＋ Nouveau prompt
+            <button className="btn-header-add" onClick={add} title="Nouveau prompt">
+              ＋ <span className="text-hide-mobile">Nouveau</span>
             </button>
             {userId ? (
-              <button className="auth-button" onClick={signOut}>
+              <button className="btn-header-auth" onClick={signOut}>
                 Déconnexion
               </button>
             ) : (
-              <button className="auth-button" onClick={signIn}>
-                Continuer avec Google
+              <button className="btn-header-auth" onClick={signIn}>
+                <b>G</b> <span className="text-hide-mobile">Connexion</span>
               </button>
             )}
-            <span className="extension">Extension Chrome ↗</span>
+            <span className="extension-pill">Extension ↗</span>
           </div>
         </header>
+
 
 
         <div className="toolbar">
