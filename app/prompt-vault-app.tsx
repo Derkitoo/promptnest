@@ -686,6 +686,34 @@ export default function PromptVaultApp() {
           </div>
         </div>
       )}
+      {/* Floating Action Button pour tester/remplir les variables rapidement */}
+      <button
+        className="fab-webapp"
+        style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          zIndex: 40,
+          background: "#183b2b",
+          color: "#fff",
+          border: "1px solid #2e5b45",
+          borderRadius: "30px",
+          padding: "12px 20px",
+          fontSize: "13px",
+          fontWeight: 700,
+          boxShadow: "0 8px 30px rgba(0,0,0,0.25)",
+          cursor: "pointer",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+
+        onClick={() => handleCopyRequest()}
+        title="Remplir les variables du prompt sélectionné"
+      >
+        ⚡ Remplir & Copier ({currentVars.length})
+      </button>
     </main>
   );
 }
+
