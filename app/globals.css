@@ -6,3 +6,36 @@
 .sidebar .new-button{display:block;background:#dff3ba;color:#183b2b;padding:13px;margin-bottom:18px;font-weight:700;text-align:left;border-radius:9px}
 @media(max-width:1000px){.mobile-new{display:inline-block!important;background:#183b2b!important;color:#fff!important;border-radius:8px!important;padding:11px 14px!important;font-weight:700}.editor.mobile-open{display:flex;position:fixed;z-index:30;inset:12px;background:#fff;border-radius:14px;padding:0 18px;overflow-y:auto;box-shadow:0 20px 70px #102b1f55}.editor.mobile-open .mobile-close{display:inline-block;font-size:22px;margin-left:8px}.editor.mobile-open .editor-footer{position:sticky;bottom:0;background:#fff}.editor.mobile-open .prompt-editor{min-height:260px}}
 @media(max-width:700px){.workspace header{display:block}.header-actions{margin-top:16px}.mobile-new{width:100%;font-size:14px!important}.prompt-card{grid-template-columns:34px minmax(0,1fr) 24px}.editor.mobile-open{inset:0;border-radius:0}.editor-fields{grid-template-columns:1fr}.editor-footer{justify-content:stretch}.editor-footer button{flex:1;padding:12px}.toast{right:14px;bottom:14px}}
+
+/* Modals, Collections, Revisions & Template Gallery */
+.modal-overlay{position:fixed;inset:0;z-index:50;background:rgba(15,25,20,0.6);backdrop-filter:blur(3px);display:grid;place-items:center;padding:16px}
+.modal-card{background:#fff;border-radius:16px;width:100%;max-width:680px;max-height:85vh;display:flex;flex-direction:column;box-shadow:0 25px 60px -15px rgba(0,0,0,0.3);overflow:hidden}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.modal-header h2{font:20px Georgia;margin:0}
+.modal-body{padding:22px;overflow-y:auto;flex:1}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px;background:#fafbfa}
+
+.badge-collection{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:3px 7px;border-radius:6px;background:#eef3eb;color:#2c513f;font-weight:600;margin-right:6px}
+
+.template-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.template-card{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:8px;text-align:left;cursor:pointer;transition:all 0.15s ease}
+.template-card:hover{border-color:#315b43;box-shadow:0 4px 14px rgba(49,91,67,0.1);transform:translateY(-1px)}
+.template-card h3{font-size:14px;margin:0;color:#183b2b}
+.template-card p{font-size:11px;color:var(--muted);margin:0;line-height:1.4}
+.template-card .tags-row{display:flex;gap:4px;flex-wrap:wrap;margin-top:auto;padding-top:6px}
+
+.revision-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.revision-item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:#fafbfa;display:flex;justify-content:space-between;align-items:center}
+.revision-item strong{font-size:12px;display:block}
+.revision-item small{font-size:10px;color:var(--muted)}
+
+.btn-secondary{background:#fff;border:1px solid var(--line);padding:8px 14px;border-radius:8px;font-size:12px;color:var(--ink);cursor:pointer}
+.btn-primary{background:#183b2b;color:#fff;border:0;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+.btn-primary:hover{background:#234e3a}
+
+.var-input-group{margin-bottom:14px;display:flex;flex-direction:column;gap:5px}
+.var-input-group label{font-size:11px;font-weight:700;color:#353835}
+.var-input-group input,.var-input-group textarea{border:1px solid var(--line);border-radius:8px;padding:10px;font-size:13px;outline-color:#315b43}
+
+.section-title{font-size:11px;letter-spacing:1px;color:#858985;font-weight:700;margin:16px 0 8px;display:flex;align-items:center;justify-content:space-between}
+

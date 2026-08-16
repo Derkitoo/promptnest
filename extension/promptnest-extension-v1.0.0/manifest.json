@@ -5,19 +5,10 @@
   "description": "Capturez une idée ou une sélection et retrouvez-la dans PromptNest.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvWcEinJAqAOUT+K62iaEpntc9NOsRC7du1EJ3mi5txPJ544+0H/p5yLztPdS0J6sCbFEEkAPDdo45cuR+PMdq+UQq5nkZjbQDyrhU14IghwlaWl2N8BqQGB20BNhcFeP8Iom9xYTfgwU6WPNGufMK7tapNEznMPbiicMjxpXB/764AN/QjVmSoUSGY37RJkbAaU2UjdkkCrwp/aXQgQYNBh3dbe9MGcmKjVXfL+IUsVuhocTr9cBQ9gdTXVdWt+x6IIDCsrGY9+zL4u+0nxDpgONViYVn16sO2QCHTpPF1Tq4Dxdk7Rf4Zlkl53iUMmsX/ad2y8yiOwt4st5Fk3ytQIDAQAB",
   "permissions": ["activeTab", "contextMenus", "identity", "scripting", "storage"],
-  "host_permissions": ["https://bccasaeaogizycotdqxc.supabase.co/*", "https://chatgpt.com/*", "https://claude.ai/*", "https://chat.deepseek.com/*", "https://gemini.google.com/*"],
+  "host_permissions": ["https://bccasaeaogizycotdqxc.supabase.co/*"],
   "action": {"default_popup": "popup.html", "default_title": "Enregistrer dans PromptNest", "default_icon": {"16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png"}},
   "background": {"service_worker": "background.js", "type": "module"},
-  "content_scripts": [
-    {
-      "matches": ["https://chatgpt.com/*", "https://chatgpt.com/?*", "https://claude.ai/*", "https://chat.deepseek.com/*", "https://gemini.google.com/*"],
-      "js": ["content.js"],
-      "css": ["content.css"]
-    }
-  ],
-  "commands": {
-    "_execute_action": {"suggested_key": {"default": "Ctrl+Shift+P", "mac": "Command+Shift+P"}, "description": "Ouvrir PromptNest"}
-  },
+  "commands": {"_execute_action": {"suggested_key": {"default": "Ctrl+Shift+P", "mac": "Command+Shift+P"}, "description": "Ouvrir PromptNest"}},
   "icons": {"16": "icons/icon16.png", "32": "icons/icon32.png", "48": "icons/icon48.png", "128": "icons/icon128.png"},
   "content_security_policy": {"extension_pages": "script-src 'self'; object-src 'self'"}
 }
