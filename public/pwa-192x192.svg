@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" fill="none">
+  <rect width="192" height="192" rx="40" fill="#183B2B"/>
+  <rect x="24" y="24" width="144" height="144" rx="28" fill="#234E3A" stroke="#2E5B45" stroke-width="4"/>
+  <!-- Stylized PromptNest Brand Icon "P" + Lightning -->
+  <path d="M60 48H104C121.673 48 136 62.3269 136 80C136 97.6731 121.673 112 104 112H84V144H60V48Z" fill="#DFF3BA"/>
+  <path d="M84 72H102C106.418 72 110 75.5817 110 80C110 84.4183 106.418 88 102 88H84V72Z" fill="#183B2B"/>
+  <path d="M120 108L96 148H116L108 176L144 128H124L132 108H120Z" fill="#DFF3BA"/>
+</svg>
