@@ -9,6 +9,7 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "build:pages": "vite build --config vite.github.config.ts",
+    "build:extension": "node scripts/build-extension.mjs",
     "start": "vinext start",
     "test": "node --test tests/prompt-core.test.mjs",
     "typecheck": "tsc --noEmit",

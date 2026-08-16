@@ -1,0 +1,3 @@
+const APP_URL="https://derkitoo.github.io/promptnest/";
+chrome.runtime.onInstalled.addListener(()=>{chrome.contextMenus.removeAll(()=>{chrome.contextMenus.create({id:"save-prompt",title:"Enregistrer dans PromptNest",contexts:["selection","page"]});chrome.contextMenus.create({id:"open-vault",title:"Ouvrir PromptNest",contexts:["all"]})})});
+chrome.contextMenus.onClicked.addListener(async(info,tab)=>{if(info.menuItemId==="open-vault")return chrome.tabs.create({url:APP_URL});if(info.menuItemId==="save-prompt"){await chrome.storage.local.set({"promptnest.pendingCapture":{title:tab?.title||"Nouvelle capture",url:tab?.url||info.pageUrl||"",selection:info.selectionText||""}});if(tab?.windowId)await chrome.action.openPopup({windowId:tab.windowId}).catch(()=>{})}});

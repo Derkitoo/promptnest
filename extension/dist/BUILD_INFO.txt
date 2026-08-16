@@ -1,0 +1,3 @@
+PromptNest 1.0.0
+Extension ID: beflijeobbbggeimbknjohpckbkdaphb
+OAuth redirect: https://beflijeobbbggeimbknjohpckbkdaphb.chromiumapp.org/supabase
