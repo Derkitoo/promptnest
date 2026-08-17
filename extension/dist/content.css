@@ -169,3 +169,49 @@
   font-weight: bold;
   cursor: pointer;
 }
+
+/* Slash Menu (/) Popup */
+#promptnest-slash-menu {
+  position: absolute;
+  z-index: 999999;
+  width: 280px;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #d8e2d4;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  font-family: system-ui, -apple-system, sans-serif;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pn-slash-item {
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pn-slash-item:hover, .pn-slash-item.active {
+  background: #f0f5ec;
+}
+
+.pn-slash-item strong {
+  font-size: 12px;
+  color: #183b2b;
+}
+
+.pn-slash-item small {
+  font-size: 10px;
+  color: #718096;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+

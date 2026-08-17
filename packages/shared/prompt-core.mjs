@@ -6,4 +6,6 @@ export const inspectImport=(rows,existing=[])=>{const ids=new Set(existing.map(x
 export const createRevision=(prompt,note="")=>({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()),promptId:prompt.id,title:prompt.title,content:prompt.content,category:prompt.category,tags:[...prompt.tags],collectionId:prompt.collectionId||null,createdAt:new Date().toISOString(),note});
 export const rollbackRevision=(prompt,revision)=>({...prompt,title:revision.title,content:revision.content,category:revision.category,tags:[...revision.tags],collectionId:revision.collectionId||null,updatedAt:new Date().toISOString()});
 export const filterByCollection=(prompts,collectionId)=>collectionId?prompts.filter(p=>p.collectionId===collectionId):prompts;
+export const searchPrompts=(prompts,query="")=>{const q=query.trim().toLowerCase();if(!q)return prompts;return prompts.filter(p=>((p.title||"").toLowerCase().includes(q)||(p.category||"").toLowerCase().includes(q)||(p.content||"").toLowerCase().includes(q)||(p.tags||[]).some(t=>t.toLowerCase().includes(q)))).sort((a,b)=>((a.title||"").toLowerCase().startsWith(q)?-1:0)-((b.title||"").toLowerCase().startsWith(q)?-1:0));};
+
 

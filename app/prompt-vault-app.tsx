@@ -2,7 +2,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { TEMPLATE_LIBRARY, PromptTemplate } from "../lib/prompt-templates";
-import { extractVariables, renderPrompt, createRevision, rollbackRevision } from "../packages/shared/prompt-core.mjs";
+import { extractVariables, renderPrompt, createRevision, rollbackRevision, searchPrompts } from "../packages/shared/prompt-core.mjs";
+
 
 export type Revision = {
   id: string;
@@ -123,6 +124,27 @@ export default function PromptVaultApp() {
   const [newColName, setNewColName] = useState("");
   const [showAddCol, setShowAddCol] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
+  // Command Palette & Keyboard Shortcuts
+  const [showCmdPalette, setShowCmdPalette] = useState(false);
+  const [cmdQuery, setCmdQuery] = useState("");
+  const [cmdSelectedIndex, setCmdSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setShowCmdPalette((prev) => !prev);
+      } else if (e.key === "Escape") {
+        setShowCmdPalette(false);
+        setShowGallery(false);
+        setShowVarRunner(false);
+        setMobileDrawerOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -783,7 +805,84 @@ export default function PromptVaultApp() {
           </div>
         </div>
       )}
+      {/* Modal: Command Palette (Ctrl+K) */}
+      {showCmdPalette && (
+        <div className="modal-overlay" onClick={() => setShowCmdPalette(false)}>
+          <div className="cmd-palette-card" onClick={(e) => e.stopPropagation()}>
+            <div className="cmd-input-row">
+              <span>⌕</span>
+              <input
+                autoFocus
+                type="text"
+                placeholder="Recherche rapide (ex: 'Revue', 'Code', 'Nouveau')..."
+                value={cmdQuery}
+                onChange={(e) => {
+                  setCmdQuery(e.target.value);
+                  setCmdSelectedIndex(0);
+                }}
+                onKeyDown={(e) => {
+                  const filtered = searchPrompts(items, cmdQuery);
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    setCmdSelectedIndex((prev) => Math.min(prev + 1, Math.max(0, filtered.length - 1)));
+                  } else if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    setCmdSelectedIndex((prev) => Math.max(prev - 1, 0));
+                  } else if (e.key === "Enter" && filtered[cmdSelectedIndex]) {
+                    e.preventDefault();
+                    const target = filtered[cmdSelectedIndex];
+                    setSelected(target.id);
+                    setShowCmdPalette(false);
+                    const vars = extractVariables(target.content);
+                    if (vars.length > 0) {
+                      setVarValues({});
+                      setShowVarRunner(true);
+                    } else {
+                      copyDirect(target.content);
+                    }
+                  }
+                }}
+              />
+              <span className="cmd-shortcut-badge">ESC</span>
+            </div>
+            <div className="cmd-list">
+              {searchPrompts(items, cmdQuery).length === 0 ? (
+                <div style={{ padding: "16px", textAlign: "center", color: "#888", fontSize: "12px" }}>
+                  Aucun prompt trouvé pour "{cmdQuery}"
+                </div>
+              ) : (
+                searchPrompts(items, cmdQuery).map((p: Prompt, idx: number) => (
+
+                  <button
+                    key={p.id}
+                    className={`cmd-item ${idx === cmdSelectedIndex ? "selected" : ""}`}
+                    onClick={() => {
+                      setSelected(p.id);
+                      setShowCmdPalette(false);
+                      const vars = extractVariables(p.content);
+                      if (vars.length > 0) {
+                        setVarValues({});
+                        setShowVarRunner(true);
+                      } else {
+                        copyDirect(p.content);
+                      }
+                    }}
+                  >
+                    <div className="cmd-item-info">
+                      <span className="cmd-item-title">{p.title}</span>
+                      <span className="cmd-item-sub">{p.content.substring(0, 70)}...</span>
+                    </div>
+                    <span className="cmd-shortcut-badge">{p.category || "Prompt"}</span>
+                  </button>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Barre de navigation basse pour écran mobile */}
+
       <div className="bottom-nav">
         <button className={view === "all" ? "active" : ""} onClick={() => { setView("all"); setMobileDrawerOpen(false); }}>
           <span>▦</span> Prompts

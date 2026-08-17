@@ -1,4 +1,4 @@
-import test from "node:test";import assert from "node:assert/strict";import{extractVariables,renderPrompt,validatePrompt,resolveConflict,inspectImport,createRevision,rollbackRevision,filterByCollection}from"../packages/shared/prompt-core.mjs";
+import test from "node:test";import assert from "node:assert/strict";import{extractVariables,renderPrompt,validatePrompt,resolveConflict,inspectImport,createRevision,rollbackRevision,filterByCollection,searchPrompts}from"../packages/shared/prompt-core.mjs";
 test("variables",()=>{assert.deepEqual(extractVariables("{{sujet}} / {{ sujet }}"),["sujet"]);assert.equal(renderPrompt("Salut {{nom}}",{nom:"Ada"}),"Salut Ada")});
 test("validation",()=>{assert.equal(validatePrompt({title:"A",content:"B"}).ok,true);assert.equal(validatePrompt({title:"",content:"B"}).ok,false)});
 test("latest update wins",()=>assert.equal(resolveConflict({updatedAt:"2026-01-01"},{updatedAt:"2026-02-01"}).updatedAt,"2026-02-01"));
@@ -18,4 +18,11 @@ test("collection filtering",()=>{
  assert.equal(filterByCollection(list,"col1").length,1);
  assert.equal(filterByCollection(list,null).length,3);
 });
+test("search prompts",()=>{
+ const list=[{id:"1",title:"Revue de code",category:"Dev",content:"Analyser",tags:["git"]},{id:"2",title:"Marketing Copy",category:"Copy",content:"Vendre",tags:["ad"]}];
+ assert.equal(searchPrompts(list,"code").length,1);
+ assert.equal(searchPrompts(list,"git").length,1);
+ assert.equal(searchPrompts(list,"").length,2);
+});
+
 

@@ -270,6 +270,77 @@
     togglePalette(false);
   });
 
+  // Slash Command (/) Listener in AI Textareas
+  const slashMenu = document.createElement("div");
+  slashMenu.id = "promptnest-slash-menu";
+  slashMenu.className = "promptnest-hidden";
+  document.body.appendChild(slashMenu);
+
+  document.addEventListener("keyup", (e) => {
+    const target = e.target;
+    if (!target) return;
+    const isTextarea = target.tagName === "TEXTAREA" || target.tagName === "INPUT" || target.isContentEditable;
+    if (!isTextarea) return;
+
+    const val = target.value || target.innerText || "";
+    if (val.startsWith("/")) {
+      const query = val.slice(1).toLowerCase();
+      const matches = cachedPrompts.filter(
+        (p) => p.title.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query))
+      );
+
+      if (matches.length > 0) {
+        const rect = target.getBoundingClientRect();
+        slashMenu.style.left = `${Math.max(10, rect.left)}px`;
+        slashMenu.style.top = `${Math.max(10, rect.top - 180)}px`;
+        slashMenu.innerHTML = matches
+          .map(
+            (p, idx) => `
+          <div class="pn-slash-item ${idx === 0 ? "active" : ""}" data-id="${p.id}">
+            <strong>/${escapeHtml(p.title)}</strong>
+            <small>${escapeHtml(p.content.slice(0, 50))}...</small>
+          </div>
+        `
+          )
+          .join("");
+
+        slashMenu.classList.remove("promptnest-hidden");
+
+        slashMenu.querySelectorAll(".pn-slash-item").forEach((el) => {
+          el.addEventListener("click", () => {
+            const pId = el.getAttribute("data-id");
+            const found = cachedPrompts.find((x) => x.id === pId);
+            if (found) {
+              selectPrompt(found);
+              slashMenu.classList.add("promptnest-hidden");
+            }
+          });
+        });
+      } else {
+        slashMenu.classList.add("promptnest-hidden");
+      }
+    } else {
+      slashMenu.classList.add("promptnest-hidden");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (!slashMenu.classList.contains("promptnest-hidden") && (e.key === "Enter" || e.key === "Tab")) {
+      const activeItem = slashMenu.querySelector(".pn-slash-item.active");
+      if (activeItem) {
+        e.preventDefault();
+        const pId = activeItem.getAttribute("data-id");
+        const found = cachedPrompts.find((x) => x.id === pId);
+        if (found) {
+          selectPrompt(found);
+          slashMenu.classList.add("promptnest-hidden");
+        }
+      }
+    } else if (e.key === "Escape") {
+      slashMenu.classList.add("promptnest-hidden");
+    }
+  });
+
   // Keyboard shortcut Ctrl+Shift+K / Cmd+Shift+K
   document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === "k") {
@@ -278,3 +349,4 @@
     }
   });
 })();
+
